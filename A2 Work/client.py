@@ -1,7 +1,7 @@
 import requests
 from requests import Response
-from hashlib import sha256
-from argon2 import PasswordHasher
+#from hashlib import sha256
+#from argon2 import PasswordHasher
 from pydantic import BaseModel
 import rsa
 import base64
@@ -10,11 +10,11 @@ import json
 from fastapi import status
 
 SERVER_ADDR = "127.0.0.1"
-SERVER_PORT = "8000"
+SERVER_PORT = "8001"
 
 SERVER_URL = f"http://{SERVER_ADDR}:{SERVER_PORT}"
 
-ph = PasswordHasher()
+#ph = PasswordHasher()
 class Candidate(BaseModel):
     number: int
     name: str
@@ -134,6 +134,9 @@ if __name__ == "__main__":
         }
         
         ballot_req_data = json.dumps(ballot).encode("utf8")
+
+        #!!! REMOVE !!!
+        print(ballot_req_data)
         
         ballot_req_enc = rsa.encrypt(ballot_req_data, server_pub_key)
         

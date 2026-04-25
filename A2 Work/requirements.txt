@@ -3,3 +3,4 @@ uvicorn
 pydantic
 fastapi
 argon2-cffi
+rsa
