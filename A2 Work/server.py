@@ -164,6 +164,7 @@ def validate_votes_endpoint():
 
 @app.post("/deauthorize")
 async def deauthorize_pin_endpoint(request: Request):
+
     (decrypted, pin) = await decrypt_request(request)
     
     if not decrypted:
@@ -177,6 +178,9 @@ async def deauthorize_pin_endpoint(request: Request):
 
 @app.post("/authorize")
 async def authorize_pin_endpoint(request: Request):
+
+    print (request)
+
     (decrypted, pin) = await decrypt_request(request)
 
     if not decrypted:

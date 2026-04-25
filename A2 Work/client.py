@@ -10,6 +10,7 @@ import json
 from fastapi import status
 
 SERVER_ADDR = "127.0.0.1"
+## actually the router port
 SERVER_PORT = "8001"
 
 SERVER_URL = f"http://{SERVER_ADDR}:{SERVER_PORT}"

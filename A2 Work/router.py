@@ -26,7 +26,7 @@ PORT = 8001
 
 
 # in order to talk to the server we need it's address
-SERVER_ADDR = "127.0.0.1"
+SERVER_ADDR = "127.0.0.2"
 # !!! this should be changed to 8001 at the end
 SERVER_PORT = "8000"
 SERVER_URL = f"http://{SERVER_ADDR}:{SERVER_PORT}"
@@ -39,27 +39,74 @@ SERVER_URL = f"http://{SERVER_ADDR}:{SERVER_PORT}"
 ##VOTES_FILE = "votes.csv"
 
 
+
+# appears to work fully
 @app.get("/candidates")
 def get_candidates():
-    candidates = requests.get(url=f"{SERVER_URL}/candidates")
-    print ("router: candidates")
-    return candidates
+    response = requests.get(url=f"{SERVER_URL}/candidates")
+    
+    return Response(status_code=status.HTTP_200_OK, content=response.content)
 
+# appears to work fully
 @app.get("/validate_votes")
 def validate_votes_endpoint():
-    print ("router: validate_votes")
+    
+    response = requests.get(url=f"{SERVER_URL}/validate_votes")
 
+    return Response(status_code=status.HTTP_200_OK, content=response.content)
+
+
+# appears to work well enough 
+# does not fully account for failure methods, but those shouldn't come up, and we'll be faking them eventually anyways
 @app.post("/deauthorize")
 async def deauthorize_pin_endpoint(request: Request):
-    print ("router: deauthorize")
+    # gets the data field from the client's request so we can pretend to be the client
+    encrypted_ID = await request.body()
+    # ask the server for the client's request
+    response = requests.post(url=f"{SERVER_URL}/deauthorize", data=encrypted_ID, headers={'Content-Type': 'application/octet-stream'})
 
+    return Response(status_code=status.HTTP_200_OK, content=json.dumps({"message": "PIN Deauthorized!"}))
+
+
+
+# appears to work fully
 @app.post("/authorize")
 async def authorize_pin_endpoint(request: Request):
-    print ("router: authorize")
 
+    # gets the data field from the client's request so we can pretend to be the client
+    encrypted_ID = await request.body()
+    # ask the server for the client's request
+    response = requests.post(url=f"{SERVER_URL}/authorize", data=encrypted_ID, headers={'Content-Type': 'application/octet-stream'})
+
+
+    # respond to the client as the server
+    if response.status_code == 200:
+        return Response(status_code=status.HTTP_200_OK, content=json.dumps({"message": "PIN Authorized!"}))
+    elif response.status_code == 400:
+        return Response(status_code=status.HTTP_400_BAD_REQUEST, content=response.content)
+    else:
+        return Response(status_code=status.HTTP_400_BAD_REQUEST, content=json.dumps({"message": "Unknown error occurred, please try again!"}))
+
+
+# appears to work fully
 @app.post("/vote")
 async def vote_endpoint(request: Request):
-    print ("router: vote")
+    # gets the data field from the client's request so we can pretend to be the client
+    encrypted_vote = await request.body()
+    # ask the server for the client's request
+    response = requests.post(url=f"{SERVER_URL}/vote", data=encrypted_vote, headers={'Content-Type': 'application/octet-stream'})
+
+    if response.status_code == 401:
+        return Response(status_code=status.HTTP_401_UNAUTHORIZED)
+    elif response.status_code == 403:
+        return Response(status_code=status.HTTP_403_FORBIDDEN)
+    elif response.status_code == 200:
+        return Response(status_code=status.HTTP_200_OK)
+    else:
+        return Response(status_code=status.HTTP_400_BAD_REQUEST)
+
+
+
 
 '''
 implement the attack once the pass-through works properly
@@ -96,6 +143,7 @@ def get_res(res: Response):
 if __name__ == "__main__":
     print(f"[i] Started server on port {PORT}")
 
+    '''
     if not Path("public.pem").exists() or not Path("private.pem").exists():
         (public_key, private_key) = rsa.newkeys(2048, exponent=65537)
 
@@ -110,5 +158,6 @@ if __name__ == "__main__":
     with open("private.pem", "rb") as f:
         private_key = rsa.PrivateKey.load_pkcs1(f.read())
         print("[i] Opened private key")
+    '''
 
     uvicorn.run(app, host="0.0.0.0", port=PORT)

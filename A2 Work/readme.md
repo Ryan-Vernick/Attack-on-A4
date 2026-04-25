@@ -6,7 +6,7 @@ First, create a Python venv in the root folder here and run the following comman
 python -m pip install -r requirements.txt
 ```
 
-Then, open two terminal windows and run both the `server.py` file first in one window, followed by the `client.py` file in the other window. Follow the on-screen prompts to authenticate a pin and submit a ballot. The following pins are already registered to be used, any other pins will not be allowed to submit a ballot to the server. If you want to reset the ballots, clear the pins from the `votes.csv` file and change the numbers under each candidate to 0.
+Then, open three terminal windows and run first the `server.py` file first in one window, followed by the `router.py` file in the second, and lastly the `client.py` file in the thirs window. Follow the on-screen prompts to authenticate a pin and submit a ballot. The following pins are already registered to be used, any other pins will not be allowed to submit a ballot to the server. If you want to reset the ballots, clear the pins from the `votes.csv` file and change the numbers under each candidate to 0.
 
 Valid PINs:
 
