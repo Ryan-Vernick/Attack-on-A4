@@ -1,3 +1,5 @@
+
+## COPY OF IMPLEMENTED CLIENT IMPORTS
 import requests
 from requests import Response
 ''' redundant with server imports:
@@ -6,18 +8,23 @@ import rsa
 import base64
 import json
 '''
-
-import base64
-import csv
-import rsa
+# COPY OF SERVER IMPORTS
 import uvicorn
 import json
-from hashlib import sha256
-from pydantic import BaseModel
-from pathlib import Path
 from fastapi import FastAPI, status, Request
 from fastapi.responses import Response
-from starlette.responses import JSONResponse
+''' unused:
+#import base64
+#import csv
+#import rsa
+#from hashlib import sha256
+#from pydantic import BaseModel
+#from pathlib import Path
+#from starlette.responses import JSONResponse
+'''
+# NEW IMPORTS
+import asyncio
+import bruteForce
 
 # this is us
 app = FastAPI()
@@ -141,23 +148,9 @@ def get_res(res: Response):
         
 
 if __name__ == "__main__":
+
     print(f"[i] Started server on port {PORT}")
 
-    '''
-    if not Path("public.pem").exists() or not Path("private.pem").exists():
-        (public_key, private_key) = rsa.newkeys(2048, exponent=65537)
-
-        with open("public.pem", "wb") as f:
-            f.write(public_key.save_pkcs1())
-
-        with open("private.pem", "wb") as f:
-            f.write(private_key.save_pkcs1())
-
-        print("[i] Generated new public/private keypair")
-
-    with open("private.pem", "rb") as f:
-        private_key = rsa.PrivateKey.load_pkcs1(f.read())
-        print("[i] Opened private key")
-    '''
-
     uvicorn.run(app, host="0.0.0.0", port=PORT)
+
+    asyncio.run(bruteForce.getKeys()) 
