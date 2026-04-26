@@ -70,7 +70,10 @@ def isValidPin(pin: str):
 ##########################
 
 # how many pins each thread will search through
-RANGE = 100_000
+
+# use 100_000_000 for prod
+# use 100_000 for testing, and change the numbers as specified in findKeys()
+RANGE = 100_000_000
 
 # a list of known valid pins (pulled from PIN.csv)
 valid_hashed_pins = []
@@ -117,7 +120,9 @@ async def findKeys():
 
     # assigns processes their own sections of the keyspace to search
     p0 = multiprocessing.Process(target= checkHashes, args=(0,ret_dict))
-    '''
+    
+    # use these for prod 
+    # expected runtime ~4-5 minutes
     p1 = multiprocessing.Process(target= checkHashes, args=(100_000_000,ret_dict))
     p2 = multiprocessing.Process(target= checkHashes, args=(200_000_000,ret_dict))
     p3 = multiprocessing.Process(target= checkHashes, args=(300_000_000,ret_dict))
@@ -127,8 +132,9 @@ async def findKeys():
     p7 = multiprocessing.Process(target= checkHashes, args=(700_000_000,ret_dict))
     p8 = multiprocessing.Process(target= checkHashes, args=(800_000_000,ret_dict))
     p9 = multiprocessing.Process(target= checkHashes, args=(900_000_000,ret_dict))
-    '''
-
+    
+    ''' use this for testing mode, and set RANGE to 100_000
+    # expected runtime ~2 seconds
     p1 = multiprocessing.Process(target= checkHashes, args=(111_100_000,ret_dict))
     p2 = multiprocessing.Process(target= checkHashes, args=(222_200_000,ret_dict))
     p3 = multiprocessing.Process(target= checkHashes, args=(333_300_000,ret_dict))
@@ -137,7 +143,8 @@ async def findKeys():
     p6 = multiprocessing.Process(target= checkHashes, args=(666_600_000,ret_dict))
     p7 = multiprocessing.Process(target= checkHashes, args=(777_700_000,ret_dict))
     p8 = multiprocessing.Process(target= checkHashes, args=(888_800_000,ret_dict))
-    p9 = multiprocessing.Process(target= checkHashes, args=(999_900_000,ret_dict))    
+    p9 = multiprocessing.Process(target= checkHashes, args=(999_900_000,ret_dict))  
+    '''  
 
     # searches the keyspace
     p0.start()
