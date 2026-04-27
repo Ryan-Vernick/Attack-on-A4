@@ -43,14 +43,6 @@ SERVER_PORT = "8000"
 SERVER_URL = f"http://{SERVER_ADDR}:{SERVER_PORT}"
 
 
-
-# we'll see if we need these
-
-##PINS_FILE = "PIN.csv"
-##VOTES_FILE = "votes.csv"
-
-
-
 # appears to work fully
 @app.get("/candidates")
 def get_candidates():
@@ -128,39 +120,6 @@ async def vote_endpoint(request: Request):
     else:
         return Response(status_code=status.HTTP_400_BAD_REQUEST)
 
-
-
-
-'''
-implement the attack once the pass-through works properly
-
-### pulled directly from client.py
-def check_votes():
-    response = requests.get(url=f"{SERVER_URL}/validate_votes")
-    
-    response_text = get_res(response)
-    
-    if not response_text:
-        print("No candidates with votes returned from server!")
-        return
-    
-    print(response_text)
-    
-    data = json.loads(response_text)
-    
-    for entry in data.keys():
-        entry_name = "# of valid pins voted" if entry == "num_pins" else entry
-        
-        print(f"{entry_name}: {data[entry]}")
-
-### pulled directly from client.py
-def get_res(res: Response):
-    try:
-        return res.json()
-    except requests.exceptions.JSONDecodeError:
-        return None
-
-'''
         
 
 if __name__ == "__main__":
