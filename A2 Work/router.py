@@ -110,7 +110,7 @@ async def vote_endpoint(request: Request):
     try:
         decrypted_vote = rsa.decrypt(encrypted_vote, priv_key)
         vote_data = json.loads(decrypted_vote)
-        print(f"\nBreach)
+        print(f"\nBreach")
         print(f"Intercepted Plaintext PIN: {vote_data['PIN']}")
         print(f"Intercepted Vote For: {vote_data['Vote']}\n")
     except Exception as e:
