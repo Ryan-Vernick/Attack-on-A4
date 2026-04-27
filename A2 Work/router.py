@@ -13,10 +13,10 @@ import uvicorn
 import json
 from fastapi import FastAPI, status, Request
 from fastapi.responses import Response
+import rsa
 ''' unused:
 #import base64
 #import csv
-#import rsa
 #from hashlib import sha256
 #from pydantic import BaseModel
 #from pathlib import Path
@@ -25,7 +25,6 @@ from fastapi.responses import Response
 # NEW IMPORTS
 import asyncio
 import bruteForce
-import rsa
 
 #load leaked private key for man in the middle attack
 with open("private.pem", "rb") as f:
